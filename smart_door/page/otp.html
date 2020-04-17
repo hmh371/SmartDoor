@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Input otp</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script type="text/javascript" src="otp-sdk/lib/axios/dist/axios.standalone.js"></script>
+    <script type="text/javascript" src="otp-sdk/lib/CryptoJS/rollups/hmac-sha256.js"></script>
+    <script type="text/javascript" src="otp-sdk/lib/CryptoJS/rollups/sha256.js"></script>
+    <script type="text/javascript" src="otp-sdk/lib/CryptoJS/components/hmac.js"></script>
+    <script type="text/javascript" src="otp-sdk/lib/CryptoJS/components/enc-base64.js"></script>
+    <script type="text/javascript" src="otp-sdk/lib/url-template/url-template.js"></script>
+    <script type="text/javascript" src="otp-sdk/lib/apiGatewayCore/sigV4Client.js"></script>
+    <script type="text/javascript" src="otp-sdk/lib/apiGatewayCore/apiGatewayClient.js"></script>
+    <script type="text/javascript" src="otp-sdk/lib/apiGatewayCore/simpleHttpClient.js"></script>
+    <script type="text/javascript" src="otp-sdk/lib/apiGatewayCore/utils.js"></script>
+    <script type="text/javascript" src="otp-sdk/apigClient.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.283.1.min.js"></script>
+</head>
+<body>
+<div class="main">
+    <div>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs nav-justified" role="tablist">
+            <li role="presentation" class="active"><a href="#login" aria-controls="login" role="tab" data-toggle="tab"><h2>Input OTP For Access</h2></a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="login">
+                <form>
+                    <div class="form-group" >
+                        <label for="otp">OTP</label>
+                        <input type="text" name="userName" class="form-control" id="otp" placeholder="one time password">
+                    </div>
+                    <div id="result-group" class="form-group" style="display:none">
+                        <label for="result">result</label>
+                        <input disabled='disabled' type="text" name="result" class="form-control" id="result">
+                    </div>
+                    <button id="get-access" onclick="getOtpResult()" type="button" class="btn btn-default">Get Access</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script>
+function getOtpResult() {
+    var otp = $('#otp').val()
+    console.log(otp)
+    var body = {
+        'otp': otp
+    }
+    var apigClient = apigClientFactory.newClient();
+    apigClient.rootPost({}, body, {}).then(function(result) {
+        console.log(result);
+        $('#result-group').css('display', 'block')
+        if (result.data.pass == true) {
+            $('#result').val('Congratulations ' + result.data.data.name + ", you have got the permission!");
+            $('#get-access').css('display', 'none')
+        } else {
+            $('#result').val('Permission denied!');
+        }
+    }).catch(function(err) {
+        console.log(error);
+    })
+}
+</script>
+</body>
+</html>
+<style>
+    .main{
+        margin: 0 auto;
+        width: 1024px;
+    }
+</style>
